@@ -1,0 +1,18 @@
+﻿using Microsoft.AspNetCore.Identity;
+using WebApi.Models.Database;
+
+namespace WebApi.Initializers;
+
+public class RolesInitializer
+{
+    public static async Task InitializeAsync(RoleManager<Role> roleManager)
+    {
+        string[] rolesStr = { Roles.Admin, Roles.User };
+        foreach (string roleStr in rolesStr)
+        {
+            Role? role = await roleManager.FindByNameAsync(roleStr);
+            if (role is null)
+                await roleManager.CreateAsync(new Role() { Name = roleStr });
+        }
+    }
+}
