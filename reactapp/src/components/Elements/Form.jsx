@@ -29,7 +29,7 @@ export default function Form(props){
                 <Spinner /> :
                 <div className="col-md-6">
                     <form onSubmit={handleSubmit}>
-                        <props.Inputs />
+                        {props.children}
                         <br />
                         <center>
                             <button className="btn btn-outline-warning">{props.mode}</button>     

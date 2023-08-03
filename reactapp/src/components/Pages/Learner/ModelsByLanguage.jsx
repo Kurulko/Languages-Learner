@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment  } from 'react';
+import React, { useState, useEffect, Fragment, useContext  } from 'react';
 import { axiosAuthorized } from '../../../helpers/axiosAuthorized';
 import { modes } from '../../../helpers/modes';
 import { EditModels } from '../../Elements/EditModels';
@@ -6,9 +6,10 @@ import { orderBy } from '../../../helpers/orderBy';
 import { variables } from '../../../helpers/variables';
 import { getErrorsFromResponse } from '../../../helpers/getErrorsFromResponse.js';
 import BaseInput from '../../Elements/BaseInput';
+import { LanguageContext } from '../../Providers/LanguageProvider'
 
 export function ModelsByLanguage(props) {
-    const currentLanguage = JSON.parse(localStorage.getItem(variables.LANGUAGE_NAME));
+    const { currentLanguage } = useContext(LanguageContext);
     const isThereCurrentLanguage = currentLanguage !== null;
 
     const pathToUser = 'users';

@@ -20,38 +20,41 @@ import Nav  from './Elements/Nav';
 import Header from './Elements/Header';
 import UserWrapper from './Wrappers/UserWrapper';
 import AdminWrapper from './Wrappers/AdminWrapper';
+import {LanguageProvider} from './Providers/LanguageProvider';
 
 
 export default function App(){
   return  <React.StrictMode>
-        <Router>    
-            <div className="container">
-                <Header />
-                <Nav />
-                <br />
-                <Routes>
-                    <Route element={<UserWrapper />}>
-                        <Route index element={<Home />} />
-                        <Route path='/logout' element={<Logout />} />
-                        <Route path='/words' element={<Words />} />
-                        <Route path='/sentences' element={<Sentences />} />
-                        <Route path='/sentences/generate' element={<GenerateSentences />} />
-                        <Route path='/idioms' element={<Idioms />} />
-                        <Route path='/idioms/generate' element={<GenerateIdioms />} />
-                        <Route path='/rules' element={<Rules />} />
-                        <Route path='/user-details' element={<UserDetails />} />
-                        <Route path='/user/edit-password' element={<EditUserPassword />} />
-                    </Route>
-                    <Route element={<AdminWrapper />}>
-                        <Route path='/users' element={<Users />} />
-                        <Route path='/roles' element={<Roles />} />
-                        <Route path='/languages' element={<Languages />} />
-                    </Route>
-                    <Route path='/register' element={<Register />} />
-                    <Route path='/login' element={<Login />} />
-                    <Route path='*' element={<NotFound />} /> 
-                </Routes>
-            </div>
-        </Router>
+        <LanguageProvider>
+            <Router>    
+                <div className="container">
+                    <Header />
+                    <Nav />
+                    <br />
+                    <Routes>
+                        <Route element={<UserWrapper />}>
+                            <Route index element={<Home />} />
+                            <Route path='/logout' element={<Logout />} />
+                            <Route path='/words' element={<Words />} />
+                            <Route path='/sentences' element={<Sentences />} />
+                            <Route path='/sentences/generate' element={<GenerateSentences />} />
+                            <Route path='/idioms' element={<Idioms />} />
+                            <Route path='/idioms/generate' element={<GenerateIdioms />} />
+                            <Route path='/rules' element={<Rules />} />
+                            <Route path='/user-details' element={<UserDetails />} />
+                            <Route path='/user/edit-password' element={<EditUserPassword />} />
+                        </Route>
+                        <Route element={<AdminWrapper />}>
+                            <Route path='/users' element={<Users />} />
+                            <Route path='/roles' element={<Roles />} />
+                            <Route path='/languages' element={<Languages />} />
+                        </Route>
+                        <Route path='/register' element={<Register />} />
+                        <Route path='/login' element={<Login />} />
+                        <Route path='*' element={<NotFound />} /> 
+                    </Routes>
+                </div>
+            </Router>
+        </LanguageProvider>
     </React.StrictMode>;
 }

@@ -21,26 +21,22 @@ export default function EditUserPassword() {
         .catch(err => setErrors(getErrorsFromResponse(err.response)));
     }
 
-    function ChangePasswordElements() {
-        return <div>
-            <div>
-                <label>Old Password</label>
-                <UserPasswordInput name="oldPassword" onChange={handlePasswordChange} value={password.oldPassword} placeholder="Enter Old Password" />
-                    {/* autoComplete="old-password" */}
-            </div>
-            <br />
-            <div>
-                <label>New Password</label>
-                <UserPasswordInput name="newPassword" onChange={handlePasswordChange} value={password.newPassword} placeholder="Enter New Password" />
-            </div>
-            <br />
-            <div>
-                <label>Confirm New Password</label>
-                <UserPasswordInput name="confirmNewPassword" onChange={handlePasswordChange} value={password.confirmNewPassword} placeholder="Enter Confirm New Password" />
-            </div>
-            <br />
+    return <Form handleSubmit={updateUser} mode='Edit' name='Edit Password' errors={errors}>
+        <div>
+            <label>Old Password</label>
+            <UserPasswordInput name="oldPassword" onChange={handlePasswordChange} value={password.oldPassword} placeholder="Enter Old Password" />
+                {/* autoComplete="old-password" */}
         </div>
-    }
-
-    return <Form handleSubmit={updateUser} mode='Edit' name='Edit Password' errors={errors} Inputs={ChangePasswordElements}/>
+        <br />
+        <div>
+            <label>New Password</label>
+            <UserPasswordInput name="newPassword" onChange={handlePasswordChange} value={password.newPassword} placeholder="Enter New Password" />
+        </div>
+        <br />
+        <div>
+            <label>Confirm New Password</label>
+            <UserPasswordInput name="confirmNewPassword" onChange={handlePasswordChange} value={password.confirmNewPassword} placeholder="Enter Confirm New Password" />
+        </div>
+        <br />    
+    </Form>
 }

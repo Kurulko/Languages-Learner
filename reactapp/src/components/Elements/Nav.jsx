@@ -2,14 +2,18 @@ import React, { useState, useEffect  } from 'react';
 import ButtonLink from './ButtonLink';
 import { axiosAuthorized } from '../../helpers/axiosAuthorized';
 import { modes } from '../../helpers/modes';
+import { isAuthorized } from '../../helpers/isAuthorized';
 
 export default function Nav() {
     const [roles, setRoles] = useState([]);
     const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
-        axiosAuthorized(modes.GET, 'users/user-roles')
-        .then(response => setRoles(response.data));
+        if(isAuthorized)
+        {
+            axiosAuthorized(modes.GET, 'users/user-roles')
+            .then(response => setRoles(response.data));
+        }
     }, []);
 
     useEffect(() => {

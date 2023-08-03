@@ -9,8 +9,11 @@ export default function AccountHeader() {
     const [isImpersonating , setIsImpersonating] = useState(false);
 
     useEffect(() => {
-        axiosAuthorized(modes.GET, `users/is-impersonating`)
-        .then(response => setIsImpersonating(response.data));
+        if(isAuthorized)
+        {
+            axiosAuthorized(modes.GET, `users/is-impersonating`)
+            .then(response => setIsImpersonating(response.data));
+        }
     }, []);
 
     const authLinks = [

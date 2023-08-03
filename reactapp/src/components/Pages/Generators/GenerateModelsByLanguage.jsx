@@ -54,8 +54,8 @@ export function GenerateModelsByLanguage(props) {
 
     function saveGeneratedModels() {
         models.forEach(model => axiosAuthorized(modes.POST, pathToEdit, model)
-            .then(response => setModels(response.data)))
-            .catch(err => setErrors(getErrorsFromResponse(err.response)));
+            .then(response => setModels(response.data))
+            .catch(err => setErrors(getErrorsFromResponse(err.response))));
 
         document.location.href = `/${redirectTo}`;
     };
@@ -103,10 +103,10 @@ export function GenerateModelsByLanguage(props) {
                     <div>
                         <label>Count</label>
                         <BaseInput value={modelsOptions.count} name="count"
-                            type="count" onChange={handleModelsOptions} />
+                            type="number" onChange={handleModelsOptions} />
                     </div>
                     <br />
-                    <props.EditModel />
+                    {props.children}
                     <br />
                     <button className="btn btn-outline-warning">Generate</button> 
                   </div>

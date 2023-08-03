@@ -1,13 +1,15 @@
-import React, { useState, useEffect, Fragment  } from 'react';
+import React, { useState, useEffect, Fragment, useContext  } from 'react';
 import { axiosAuthorized } from '../../helpers/axiosAuthorized';
 import { orderBy } from '../../helpers/orderBy';
 import { modes } from '../../helpers/modes';
 import { Link } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { getErrorsFromResponse } from '../../helpers/getErrorsFromResponse.js';
+import { LanguageContext } from '../Providers/LanguageProvider'
 import Spinner from '../Elements/Spinner'
 
 export function EditModels(props) {
+    const { currentLanguage } = useContext(LanguageContext);
     const [searchParams, setSearchParams] = useSearchParams();
 
     const pathToGet = props.pathToGet;
@@ -38,6 +40,10 @@ export function EditModels(props) {
     useEffect(() => {
         setErrors(errors.concat(errorsFromChild));
     }, [errorsFromChild]);
+
+    useEffect(() => {
+        refreshList();
+    }, [currentLanguage]);
 
     useEffect(() => {
         refreshList();
@@ -86,19 +92,16 @@ export function EditModels(props) {
 
     function refreshList() {
         const isOverOneModel = models.length > 1;
-        // if(isFirstRequest || isOverOneModel)
-        {
-            dropErrors();
 
-            const defaultPageSize = 15;
-            const path = pathToGet + ((isFirstRequest || isOverOneModel) ? `?pageNumber=${currentPage}&pageSize=${defaultPageSize}&attribute=${sort.field}&orderBy=${sort.order}` : '');
-            axiosAuthorized(modes.GET, path)
-            .then(response => { 
-                setModels(response.data.models);
-                setPageViewModel(response.data.pageViewModel);
-            })
-            .catch(err => setErrors(getErrorsFromResponse(err.response)))
-        }
+        dropErrors();
+        const defaultPageSize = 15;
+        const path = pathToGet + ((isFirstRequest || isOverOneModel) ? `?pageNumber=${currentPage}&pageSize=${defaultPageSize}&attribute=${sort.field}&orderBy=${sort.order}` : '');
+        axiosAuthorized(modes.GET, path)
+        .then(response => { 
+            setModels(response.data.models);
+            setPageViewModel(response.data.pageViewModel);
+        })
+        .catch(err => setErrors(getErrorsFromResponse(err.response)))
     }
 
     function refreshCurrentSort(field) {

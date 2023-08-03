@@ -1,16 +1,19 @@
-import React, { useState, useEffect  } from 'react';
+import React, { useState, useEffect, useContext   } from 'react';
 import AccountHeader from './AccountHeader';
 import { variables } from '../../helpers/variables';
 import { axiosAuthorized } from '../../helpers/axiosAuthorized';
 import { modes } from '../../helpers/modes';
+import { LanguageContext } from '../Providers/LanguageProvider';
+import { isAuthorized } from '../../helpers/isAuthorized';
 
 export default function Header() {
     const path = 'users/user-current-language';
     const [languages, setLanguages] = useState([]);
-    const [currentLanguage, setCurrentLanguage] = useState({});
-    
+    const { currentLanguage, setCurrentLanguage } = useContext(LanguageContext);
+
     useEffect(() => {
-        initializeCurrentLanguage();
+        if(isAuthorized)
+            initializeCurrentLanguage();
         initializeLanguages();
     }, []);
 

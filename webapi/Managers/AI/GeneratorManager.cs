@@ -16,7 +16,7 @@ public abstract class GeneratorManager<T> where T : ByLanguageModel
     {
         this.languageService = languageService;
 
-        string chatGPTToken = "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";//userService.GetUsedUserChatGPTTokenAsync().Result;
+        string chatGPTToken = userService.GetUsedUserChatGPTTokenAsync().Result;
         OpenAIAPI api = new(chatGPTToken);
         chat = api.Chat.CreateConversation();
 

@@ -28,7 +28,9 @@ public class UserModelsManager : BaseUserManager, IUserModelsService
         pageNumber = pageNumber ?? 1;
         pageSize = pageSize ?? countOfAllModels;
 
-        return models.OrderBy(attribute, orderBy.Value).Skip((pageNumber.Value - 1) * pageSize.Value).Take(pageSize.Value).ToIndexViewModel(countOfAllModels, pageSize, pageNumber);
+        var res = models.OrderBy(attribute, orderBy.Value).Skip((pageNumber.Value - 1) * pageSize.Value).Take(pageSize.Value).ToIndexViewModel(countOfAllModels, pageSize, pageNumber);
+        return res;
+        //return models.OrderBy(attribute, orderBy.Value).Skip((pageNumber.Value - 1) * pageSize.Value).Take(pageSize.Value).ToIndexViewModel(countOfAllModels, pageSize, pageNumber);
     }
 
     async Task<User> GetUsedUserIfUserIdIsNull(string? userId)
@@ -56,13 +58,13 @@ public class UserModelsManager : BaseUserManager, IUserModelsService
        => await GetUserModelsByLanguageAsync(u => u.IdiomsByLanguages!, userId, attribute, orderBy, pageSize, pageNumber);
 
 
-    async Task<IndexViewModel<T>> GetIndexViewUserByLanguageModelsByLanguageNameAsync<T>(Expression<Func<User, IEnumerable<T>>> expression, string languageName, string? userId, string? attribute, OrderBy? orderBy, int? pageSize, int? pageNumber)
+    async Task<IndexViewModel<T>> GetIndexViewUserByLanguageModelsByLanguageNameAsync<T>(Expression<Func<User, IEnumerable<T>>> include, string languageName, string? userId, string? attribute, OrderBy? orderBy, int? pageSize, int? pageNumber)
         where T : ByLanguageModel
     {
-        var indexViewModel = await GetUserModelsByLanguageAsync(expression, userId, attribute, orderBy, pageSize, pageNumber);
-        var models = indexViewModel.Models.Where(m => m.Language!.Name == languageName);
-
-        return models.ToIndexViewModel(indexViewModel.Models.Count(), pageSize, pageNumber);
+        getModels = getModels.Include(include).ThenInclude(model => model.Language!);
+        User user = await GetUsedUserIfUserIdIsNull(userId);
+        var models = include.Compile()(user).Where(m => m.Language!.Name == languageName);
+        return GetFilteredData(models, attribute, orderBy, pageSize, pageNumber);
     }
 
     public async Task<IndexViewModel<SentenceByLanguage>> GetUserSentencesByLanguageNameAsync(string? attribute, OrderBy? orderBy, int? pageSize, int? pageNumber, string languageName, string? userId = null)

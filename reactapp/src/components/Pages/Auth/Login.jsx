@@ -9,11 +9,8 @@ import BaseInput from '../../Elements/BaseInput';
 import UserPasswordInput from '../../Elements/UserInputs/UserPasswordInput';
 
 export default function Login() {
-  const [user, setUser] = useState({
-        name: "",
-        password: "", 
-        rememberme: false
-  });
+  const [user, setUser] = useState({});
+
   const [errors, setErrors] = useState([]);
   
   function handleSubmit(event) {
@@ -28,17 +25,16 @@ export default function Login() {
     .catch(err => setErrors(getErrorsFromResponse(err.response)))
   }
 
-  function ChangeLoginElements() {
-    function handleUserChange(event) {
-      const {name, value} = event.target;
-      setUser({ ...user, [name]: value })    
-    }
-  
-    function handleRememberMeChange(event) {
-      setUser({ ...user, "rememberme": event.target.checked })  
-    }
+  function handleUserChange(event) {
+    const {name, value} = event.target;
+    setUser({ ...user, [name]: value })    
+  }
 
-    return <Fragment>
+  function handleRememberMeChange(event) {
+    setUser({ ...user, "rememberme": event.target.checked })  
+  }
+
+  return <Form handleSubmit={handleSubmit} mode='Send' name='Login' errors={errors}>
         <div>
           <label>Name</label>
           <BaseInput value={user.name} name="name"
@@ -60,8 +56,5 @@ export default function Login() {
               className="form-check-input"
             />  
         </div>
-      </Fragment>
-  }
-
-  return <Form handleSubmit={handleSubmit} mode='Send' name='Login' errors={errors} Inputs={ChangeLoginElements}/>
+  </Form>
 }

@@ -10,7 +10,7 @@ import UserChatGPTTokenInput from '../../../Elements/UserInputs/UserChatGPTToken
 
 export default function UserDetails() {
     const [isEdit, setIsEdit] = useState(false);
-    const [user, setUser] = useState({userName: '', email:'', chatGPTToken: ''});
+    const [user, setUser] = useState({});
     const [errors, setErrors] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -32,13 +32,20 @@ export default function UserDetails() {
         setIsEdit(!isEdit);
     }
 
-    function ChangeUser() {
-        function handleUserChange(event) {
-            const {name, value} = event.target;
-            setUser({ ...user, [name]: value })    
-        }
+    function handleUserChange(event) {
+        const {name, value} = event.target;
+        setUser({ ...user, [name]: value })    
+    }
 
+    function Links() {
         return <Fragment>
+            <br />
+            <Link to='/user/edit-password' className='btn btn-outline-warning'>Edit Password</Link>
+        </Fragment>
+    }
+
+    return <Form handleSubmit={isEdit ? updateUser : changeMode} mode={isEdit ? 'Save' : 'Edit'} name='User' errors={errors} 
+        BelowForm={Links} isLoading={isLoading}>
             <div className='row'>
                 <h5 className='col'>UserName</h5>
                 <div className='col'>
@@ -59,16 +66,6 @@ export default function UserDetails() {
                     <UserChatGPTTokenInput value={user.chatGPTToken} onChange={handleUserChange} disabled={!isEdit}/>
                 </div>
             </div>
-        </Fragment>
-    }
-
-    function Links() {
-        return <Fragment>
             <br />
-            <Link to='/user/edit-password' className='btn btn-outline-warning'>Edit Password</Link>
-        </Fragment>
-    }
-
-    return <Form handleSubmit={isEdit ? updateUser : changeMode} mode={isEdit ? 'Save' : 'Edit'} name='User' errors={errors} 
-                Inputs={ChangeUser} BelowForm={Links} isLoading={isLoading}/>
+     </Form>
 }

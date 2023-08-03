@@ -33,28 +33,17 @@ public class AccountController : ApiController
     public async Task<IActionResult> Login(LoginModel login)
         => await ReturnOkTokenIfEverithingIsGood(async () => await accManager.LoginUserAsync(login), login);
 
-    async Task<IActionResult> ReturnOkTokenIfEverithingIsGood(Func<Task<IEnumerable<string>>> action, AccountModel accountModel)
-    {
-        try
-        {
-            if (ModelState.IsValid)
-            {
-                IEnumerable<string> roles = await action();
-                var tokenInfo = jwtService.GenerateJwtToken((User)accountModel, roles);
-                return Ok(new { tokenInfo.token, tokenInfo.expirationDays });
-            }
-
-            return BadRequest(ModelState);
-        }
-        catch (Exception ex)
-        {
-            var innerEx = ex.InnerException;
-            return BadRequest((innerEx is null ? ex : innerEx).Message);
-        }
-    }
-
+    
     [Authorize]
     [HttpPost(nameof(Logout))]
     public async Task<IActionResult> Logout()
         => await ReturnOkIfEverithingIsGood(accManager.LogoutUserAsync);
+
+    async Task<IActionResult> ReturnOkTokenIfEverithingIsGood(Func<Task<IEnumerable<string>>> action, AccountModel accountModel)
+        => await ReturnOkIfEverithingIsGood(async () =>
+        {
+            IEnumerable<string> roles = await action();
+            var tokenInfo = jwtService.GenerateJwtToken((User)accountModel, roles);
+            return new { tokenInfo.token, tokenInfo.expirationDays };
+        });
 }
