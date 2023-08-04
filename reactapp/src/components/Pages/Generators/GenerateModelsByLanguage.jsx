@@ -40,9 +40,10 @@ export function GenerateModelsByLanguage(props) {
     }
     
     function handleGeneratedModelInputChange(index, value) {
+
         setModels(prevModels => 
             prevModels.map((model, i) => 
-                 i === index ? model : { ...model, value: value }
+                 i !== index ? model : { ...model, value: value }
           ));
     };
     

@@ -41,15 +41,24 @@ public class BaseUserManager : IBaseUserService
         return existingUser;
     }
 
+    object ReturnDbNullIfValueIsNull(object? value)
+        => value ?? DBNull.Value;
     public async Task UpdateModelAsync(User model)
     {
         string updateSql = "UPDATE AspNetUsers " +
-            "SET UserName = @UserName, NormalizedUserName = @NormalizedUserName " +
+            "SET UserName = @UserName, NormalizedUserName = @NormalizedUserName, ChatGPTToken = @ChatGPTToken, Email = @Email,  UsedUserId = @UsedUserId " +
             "WHERE Id = @Id";
-        await db.Database.ExecuteSqlRawAsync(updateSql, 
+        
+        SqlParameter[] sqlParameters = {
             new SqlParameter("@UserName", model.UserName),
-            new SqlParameter("@NormalizedUserName", model.UserName.ToLower()),
-            new SqlParameter("@Id", model.Id));
+            new SqlParameter("@NormalizedUserName", model.UserName!.ToUpper()),
+            new SqlParameter("@ChatGPTToken", model.ChatGPTToken),
+            new SqlParameter("@Email", ReturnDbNullIfValueIsNull(model.Email)),
+            new SqlParameter("@UsedUserId", ReturnDbNullIfValueIsNull(model.UsedUserId)),
+            new SqlParameter("@Id", model.Id)
+        };
+
+        await db.Database.ExecuteSqlRawAsync(updateSql, sqlParameters);
     }
 
     public async Task<IEnumerable<User>> GetAllModelsAsync()

@@ -63,7 +63,7 @@ public class UsersController : AdminDbModelsController<User, string>
     [AllowAnonymous]
     [HttpGet("current")]
     public virtual async Task<User?> GetUserByClaimsAsync()
-        => await CheckAccess(() => userService.GetUserByClaimsAsync(User));
+        => await CheckAccess(() => userService.GetUsedUserAsync());
 
 
     [HttpGet("name")]

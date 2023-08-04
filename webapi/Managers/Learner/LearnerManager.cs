@@ -4,7 +4,7 @@ using WebApi.Models.Database.Learner;
 using WebApi.Services.Learner;
 namespace WebApi.Managers.Learner;
 
-public abstract class LearnerManager<T> : ILearnerDbModelService<T> where T : class, ILearnerModel 
+public abstract class LearnerManager<T> : ILearnerDbModelService<T> where T : class, ILearnerModel
 {
     protected readonly LearnerContext db;
     protected readonly DbSet<T> dbSet;
@@ -47,12 +47,8 @@ public abstract class LearnerManager<T> : ILearnerDbModelService<T> where T : cl
 
     public virtual async Task UpdateModelAsync(T model)
     {
-        var existingModel = await GetModelByIdAsync(model.Id);
-        if (existingModel is not null)
-        {
-            dbSet.Update(model);
-            await SaveChangesAsync();
-        }
+        dbSet.Update(model);
+        await SaveChangesAsync();
     }
 
     async Task SaveChangesAsync()
