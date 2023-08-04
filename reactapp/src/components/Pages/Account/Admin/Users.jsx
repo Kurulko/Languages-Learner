@@ -36,7 +36,6 @@ export default function Users() {
             <th className="cursor-pointer" onClick={() => changeSortValue('email')}>Email</th>
             <th className="cursor-pointer" onClick={() => changeSortValue('chatGPTToken')}>ChatGPT's token</th>
             <th>Roles</th>
-            <th>More</th>
         </Fragment>;
     }
 
@@ -46,7 +45,7 @@ export default function Users() {
         const [roles , setRoles] = useState([]);
         
         useEffect(() => {
-            axiosAuthorized(modes.GET, 'users/user-roles')
+            axiosAuthorized(modes.GET, `users/user-roles/${user.id}`)
             .then(response => setRoles(response.data))
             .catch(err => setErrors(getErrorsFromResponse(err.response)))
         }, []);

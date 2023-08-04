@@ -15,7 +15,7 @@ public abstract class ByLanguagesController<T> : LearnerController<T> where T : 
         => learnerByLanguageService = service;
 
 
-    [HttpGet("{value}")]
+    [HttpGet("by-name/{value}")]
     public async Task<T?> GetModelByValueAsync(string value)
         => await learnerByLanguageService.GetModelByValueAsync(value);
 }

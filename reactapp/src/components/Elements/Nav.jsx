@@ -1,4 +1,4 @@
-import React, { useState, useEffect  } from 'react';
+import React, { useState, useEffect, Fragment  } from 'react';
 import ButtonLink from './ButtonLink';
 import { axiosAuthorized } from '../../helpers/axiosAuthorized';
 import { modes } from '../../helpers/modes';
@@ -34,14 +34,16 @@ export default function Nav() {
     ];
 
 
-    return <nav className="navbar navbar-expand-sm bg-light navbar-dark">
-        <ul className="navbar-nav">
-            {(isAdmin ? userLinks.concat(adminLinks) : userLinks).map(userLink => {
-                const [name, path] = userLink;
-                return <li className="nav-item m-1" key={name}>
-                    <ButtonLink path={path} name={name} />
-                </li>
-            })}
-        </ul>
-    </nav>;
+    return <Fragment>
+        {!isAuthorized ? null : 
+        <nav className="navbar navbar-expand-sm bg-light navbar-dark">
+            <ul className="navbar-nav">
+                {(isAdmin ? userLinks.concat(adminLinks) : userLinks).map(userLink => {
+                    const [name, path] = userLink;
+                    return <li className="nav-item m-1" key={name}>
+                        <ButtonLink path={path} name={name} />
+                    </li>
+                })}
+            </ul>
+        </nav>}</Fragment>;
 }

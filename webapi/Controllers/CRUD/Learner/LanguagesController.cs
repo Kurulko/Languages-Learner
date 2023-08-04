@@ -12,7 +12,7 @@ public class LanguagesController : LearnerController<Language>
         => this.languageService = service;
 
 
-    [HttpGet("{name}")]
+    [HttpGet("by-name/{name}")]
     public async Task<Language?> GetLanguageByNameAsync(string name)
         => await languageService.GetLanguageByNameAsync(name);
 

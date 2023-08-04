@@ -26,7 +26,14 @@ export default function Header() {
         const _currentLanguage = JSON.parse(localStorage.getItem(variables.LANGUAGE_NAME));
         if(_currentLanguage?.name === undefined)
             axiosAuthorized(modes.GET, path)
-            .then(response => setCurrentLanguage(response.data));
+            .then(response => { 
+                const data = response.data;
+                if(data.name !== undefined)
+                    setCurrentLanguage(data)
+                else
+                    axiosAuthorized(modes.GET, `languages/by-name/${variables.DEFAULT_LANGUAGE_NAME}`)
+                    .then(r => setCurrentLanguage(r.data));
+            });
         else
             setCurrentLanguage(_currentLanguage);
     }
@@ -62,15 +69,16 @@ export default function Header() {
             <span className="d-flex justify-content-center m-3">
                 <nav className="navbar navbar-expand-sm bg-light navbar-dark">
                     <AccountHeader />
-                    <select value={currentLanguage.id} onChange={changeCurrentLanguage} className="form-control" style={{width:'30%'}}>
-                        <option disabled>Choose language</option>
-                        <option value={null}>All</option>
-                        {languages.map((language) => (
-                            <option key={language.id} value={language.id}>
-                                {language.name}
-                            </option>
-                        ))}
-                    </select>
+                    {!isAuthorized ? null : 
+                        <select value={currentLanguage.id} onChange={changeCurrentLanguage} className="form-control" style={{width:'30%'}}>
+                            <option disabled>Choose language</option>
+                            {languages.map((language) => (
+                                <option key={language.id} value={language.id}>
+                                    {language.name}
+                                </option>
+                            ))}
+                        </select>
+                    }
                 </nav>
             </span>
         </div>

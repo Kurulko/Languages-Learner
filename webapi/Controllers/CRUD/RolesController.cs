@@ -14,7 +14,7 @@ public class RolesController : AdminDbModelsController<Role, string>
     public async Task<Role> CreateRole()
         => await roleService.CreateRole();
 
-    [HttpGet("{name}")]
+    [HttpGet("by-name/{name}")]
     public async Task<Role?> GetRoleByNameAsync(string name)
         => await roleService.GetRoleByNameAsync(name);
 }

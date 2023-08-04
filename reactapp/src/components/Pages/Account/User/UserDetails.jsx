@@ -1,7 +1,9 @@
 import React, { useState, useEffect, Fragment  } from 'react';
+import { Link } from "react-router-dom";
 import { axiosAuthorized } from '../../../../helpers/axiosAuthorized';
 import { modes } from '../../../../helpers/modes';
-import { Link } from "react-router-dom";
+import { variables } from '../../../../helpers/variables.js';
+import { setLocalStorageItemWithExpiration } from '../../../../helpers/localStorageItems.js';
 import { getErrorsFromResponse } from '../../../../helpers/getErrorsFromResponse.js';
 import Form from '../../../Elements/Form';
 import UserNameInput from '../../../Elements/UserInputs/UserNameInput';
@@ -14,17 +16,26 @@ export default function UserDetails() {
     const [errors, setErrors] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    let isFirst = true;
+   
     useEffect(() => {
-        axiosAuthorized(modes.GET, 'users/current')
-        .then(response => setUser(response.data))
-        .catch(err => setErrors(getErrorsFromResponse(err.response)));
-
-        setIsLoading(false);
+        if(isFirst)
+        {
+            isFirst  = false;
+            axiosAuthorized(modes.GET, 'users/current')
+            .then(response => setUser(response.data))
+            .catch(err => setErrors(getErrorsFromResponse(err.response)))
+            .finally(() => setIsLoading(false));
+        }
       }, []);
 
     function updateUser() {
         axiosAuthorized(modes.PUT, 'users', user)
-        .then(changeMode)
+        .then(response => { 
+            const data = response.data;
+            changeMode();
+            setLocalStorageItemWithExpiration(variables.ACCESS_TOKEN_NAME, data.token, data.expirationDays * 24);
+        })
         .catch(err => setErrors(getErrorsFromResponse(err.response)));
     }
 
@@ -56,7 +67,7 @@ export default function UserDetails() {
             <div className='row'>
                 <h5 className='col'>Email</h5>
                 <div className='col'>
-                    <UserEmailInput value={user.email} onChange={handleUserChange} disabled={!isEdit}/>
+                    <UserEmailInput value={user.email ?? ''} onChange={handleUserChange} disabled={!isEdit}/>
                 </div>
             </div>
             <br />

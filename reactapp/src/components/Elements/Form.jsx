@@ -7,7 +7,7 @@ export default function Form(props){
     const isLoading = props.isLoading;
     
     function handleSubmit(event) {
-        event.preventDefault()
+        event.preventDefault();
         props.handleSubmit(event);
     }
 

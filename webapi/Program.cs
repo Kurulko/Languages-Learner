@@ -68,9 +68,11 @@ services.AddUserServices();
 services.AddChatGPTService();
 services.AddScoped<IAccountService, AccountManager>();
 
+string[] originSettings = config.GetSection("OriginSettings").Get<string[]>()!;
+
 services.AddCors(options =>
     options.AddDefaultPolicy(builder =>
-        builder.WithOrigins("https://localhost:3000")
+        builder.WithOrigins(originSettings)
                .AllowAnyHeader()
                .AllowAnyMethod()
 ));

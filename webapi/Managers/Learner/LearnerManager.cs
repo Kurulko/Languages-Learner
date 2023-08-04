@@ -19,9 +19,14 @@ public abstract class LearnerManager<T> : ILearnerDbModelService<T> where T : cl
 
     public virtual async Task<T> AddModelAsync(T model)
     {
-        await dbSet.AddAsync(model);
-        await SaveChangesAsync();
-        return model;
+        var existingModel = await GetModelByIdAsync(model.Id);
+        if (existingModel is null)
+        {
+            await dbSet.AddAsync(model);
+            await SaveChangesAsync();
+            return model;
+        }
+        return existingModel;
     }
 
     public virtual async Task DeleteModelAsync(long key)
@@ -42,8 +47,12 @@ public abstract class LearnerManager<T> : ILearnerDbModelService<T> where T : cl
 
     public virtual async Task UpdateModelAsync(T model)
     {
-        dbSet.Update(model);
-        await SaveChangesAsync();
+        var existingModel = await GetModelByIdAsync(model.Id);
+        if (existingModel is not null)
+        {
+            dbSet.Update(model);
+            await SaveChangesAsync();
+        }
     }
 
     async Task SaveChangesAsync()

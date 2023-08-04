@@ -15,18 +15,12 @@ public class ApiController : ControllerBase
     {
         try
         {
-            if (ModelState.IsValid)
-            {
-                await action();
-                return Ok();
-            }
-
-            return BadRequest(ModelState);
+            await action();
+            return Ok();
         }
         catch (Exception ex)
         {
-            var innerEx = ex.InnerException;
-            return BadRequest((innerEx is null ? ex : innerEx).Message);
+            return ReturnProblemDetails(ex);
         }
     }
 
@@ -34,29 +28,32 @@ public class ApiController : ControllerBase
     {
         try
         {
-            if (ModelState.IsValid)
-                return Ok(await action());
-            return BadRequest(ModelState);
+            return Ok(await action());
         }
         catch (Exception ex)
         {
-            Exception? innerEx = ex.InnerException;
-            string errorsMessage = (innerEx is null ? ex : innerEx).Message;
+            return ReturnProblemDetails(ex);
+        }
+    }
 
-            var errors = new Dictionary<string, string[]>
+    IActionResult ReturnProblemDetails(Exception ex)
+    {
+        Exception? innerEx = ex.InnerException;
+        string errorsMessage = (innerEx is null ? ex : innerEx).Message;
+
+        var errors = new Dictionary<string, string[]>
             {
                 { "Exception", new string[] { errorsMessage } },
             };
 
-            ProblemDetails problemDetails = new ()
-            {
-                Title = "One or more validation errors occurred.",
-                Status = StatusCodes.Status400BadRequest,
-                Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
-                Extensions = { ["errors"] = errors }
-            };
+        ProblemDetails problemDetails = new()
+        {
+            Title = "One or more validation errors occurred.",
+            Status = StatusCodes.Status400BadRequest,
+            Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+            Extensions = { ["errors"] = errors }
+        };
 
-            return BadRequest(problemDetails);
-        }
+        return BadRequest(problemDetails);
     }
 }

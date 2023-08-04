@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Security.Claims;
@@ -31,22 +32,31 @@ public class BaseUserManager : IBaseUserService
 
     public async Task<User> AddModelAsync(User model)
     {
-        await userManager.CreateAsync(model);
-        return model;
+        User? existingUser = await GetModelByIdAsync(model.Id);
+        if (existingUser is null)
+        {
+            await userManager.CreateAsync(model);
+            return model;
+        }
+        return existingUser;
     }
 
     public async Task UpdateModelAsync(User model)
     {
-        db.Entry(model).State = EntityState.Modified;
-        await db.SaveChangesAsync();
+        string updateSql = "UPDATE AspNetUsers " +
+            "SET UserName = @UserName, NormalizedUserName = @NormalizedUserName " +
+            "WHERE Id = @Id";
+        await db.Database.ExecuteSqlRawAsync(updateSql, 
+            new SqlParameter("@UserName", model.UserName),
+            new SqlParameter("@NormalizedUserName", model.UserName.ToLower()),
+            new SqlParameter("@Id", model.Id));
     }
-        //=> await userManager.UpdateAsync(model);
 
     public async Task<IEnumerable<User>> GetAllModelsAsync()
-        => await getModels.ToListAsync();
+        => await getModels.AsNoTracking().ToListAsync();
 
     public async Task<User?> GetModelByIdAsync(string key)
-        => await getModels.SingleOrDefaultAsync(u => u.Id == key);
+        => await getModels.AsNoTracking().SingleOrDefaultAsync(u => u.Id == key);
 
     public async Task DeleteModelAsync(string key)
     {

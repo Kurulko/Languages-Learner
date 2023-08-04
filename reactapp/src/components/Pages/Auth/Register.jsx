@@ -177,7 +177,7 @@ function ChatGPTTokenStep(props) {
     <div>
       <div>
         <label>ChatGPT token</label>
-        <UserChatGPTTokenInput onChange={props.chatgpttoken} value={props.passwordconfirm} placeholder="Enter ChatGPT token" />
+        <UserChatGPTTokenInput onChange={props.handleChange} name='chatgpttoken' value={props.chatgpttoken} placeholder="Enter ChatGPT token" />
       </div>
       <br />
       <div className="form-check form-switch">

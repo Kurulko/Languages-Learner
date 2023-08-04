@@ -10,6 +10,7 @@ using WebApi.Models.Database;
 using WebApi.Models.Database.Learner;
 using WebApi.Models.Database.Learner.ByLanguages;
 using WebApi.Models.Helpers;
+using WebApi.Services.Account;
 using WebApi.Services.Learner.ByLanguage;
 using WebApi.Services.UserServices;
 
@@ -18,10 +19,23 @@ namespace WebApi.Controllers.CRUD;
 public class UsersController : AdminDbModelsController<User, string>
 {
     readonly IUserService userService;
-    public UsersController(IUserService service) : base(service)
-        => userService = service;
+    readonly IJwtService jwtService;
+    public UsersController(IUserService service, IJwtService jwtService) : base(service)
+        => (this.userService, this.jwtService) = (service, jwtService);
 
     #region User
+
+    [AllowAnonymous]
+    public override async Task<IActionResult> UpdateModelAsync(User model)
+        => await ReturnOkIfEverithingIsGood(async () =>
+        {
+            string userId = model.Id;
+            await CheckAccessForUser(userId);
+            await service.UpdateModelAsync(model);
+            IEnumerable<string> roles = await userService.GetRolesAsync(userId);
+            var tokenInfo = jwtService.GenerateJwtToken(model, roles);
+            return new { tokenInfo.token, tokenInfo.expirationDays };
+        });
 
     [HttpGet("user-by-default")]
     public async Task<User> CreateUser()
@@ -51,9 +65,6 @@ public class UsersController : AdminDbModelsController<User, string>
     public virtual async Task<User?> GetUserByClaimsAsync()
         => await CheckAccess(() => userService.GetUserByClaimsAsync(User));
 
-    [AllowAnonymous]
-    public override async Task<IActionResult> UpdateModelAsync(User model)
-        => await CheckAccessForUser(model.Id, () => base.UpdateModelAsync(model));
 
     [HttpGet("name")]
     public virtual async Task<User?> GetUserByNameAsync(string name)
